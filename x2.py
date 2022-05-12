@@ -8,7 +8,7 @@ def binarize(img):
     """
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     binary_img = cv2.adaptiveThreshold(gray_img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 255, 2)
-    plot_img(binary_img, 'binary_img')
+    #plot_img(binary_img, 'binary_img')
     return binary_img
 
 
@@ -16,7 +16,7 @@ def noise_reduction(img):
     """ノイズ処理(中央値フィルタ)を行う
     """
     median = cv2.medianBlur(img, 9)
-    plot_img(median, 'median')
+    #plot_img(median, 'median')
     return median
 
 
@@ -53,9 +53,9 @@ def draw_contours(img, contours, file_name):
 def plot_img(img, file_name):
     """画像の書き出し
     """
-    plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-    plt.title(file_name)
-    plt.show()
+    cv2.imshow("img", img)
+    #plt.title(file_name)
+    #plt.show()
     #cv2.imwrite('./{}.png'.format(file_name), img)
 
 
@@ -66,9 +66,22 @@ def get_receipt_contours(img):
     binary_img = noise_reduction(binary_img)
     contours = find_contours(binary_img)
     approx_contours = approximate_contours(img, contours)
-    draw_contours(img, contours, 'draw_all_contours')
+    #draw_contours(img, contours, 'draw_all_contours')
     draw_contours(img, approx_contours, 'draw_rectangle_contours')
 
 
-input_file = cv2.imread(r"/Users/genkitakasaki1/Desktop/Mycode/git/dev/pic/.JPG")
-get_receipt_contours(input_file)
+#input_file = cv2.imread('/Users/genkitakasaki1/Desktop/Mycode/Git/Dev/pic/m7.JPG')
+#get_receipt_contours(input_file)
+
+video = cv2.VideoCapture(1)
+
+squares =[]
+while video.isOpened():
+    ret, frame = video.read()
+    if not ret: break
+
+    get_receipt_contours(frame)
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord("q"): break
+video.release()
+cv2.destroyWindow()
